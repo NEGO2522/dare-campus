@@ -12,12 +12,23 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const q = query(collection(db, 'users'), orderBy('points', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const leaderboardData = [];
+        // First, get all users
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        let leaderboardData = [];
+        
+        // Convert to array and ensure points is a number
         querySnapshot.forEach(doc => {
-          leaderboardData.push({ id: doc.id, ...doc.data() });
+          const userData = doc.data();
+          leaderboardData.push({
+            id: doc.id,
+            ...userData,
+            points: Number(userData.points) || 0 // Ensure points is a number
+          });
         });
+        
+        // Sort by points in descending order (highest first)
+        leaderboardData.sort((a, b) => b.points - a.points);
+        
         setUsers(leaderboardData);
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
@@ -65,7 +76,7 @@ const Leaderboard = () => {
                 </tr>
               </thead>
               <tbody className="bg-gray-800/50 divide-y divide-gray-700/50">
-                {users.map((user, index) => (
+                {users.slice(0, 5).map((user, index) => ( // Show only top 5 users
                   <motion.tr 
                     key={user.id} 
                     className="group hover:bg-gray-700/30 transition-colors duration-200"
@@ -103,9 +114,13 @@ const Leaderboard = () => {
             </table>
           </div>
           
-          {users.length === 0 && (
+          {users.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
               <p>No players on the leaderboard yet. Be the first to complete a dare! 🎯</p>
+            </div>
+          ) : users.length > 5 && (
+            <div className="text-center py-6 text-gray-400 text-sm">
+              <p>Showing top 5 players out of {users.length} total players</p>
             </div>
           )}
         </motion.div>
