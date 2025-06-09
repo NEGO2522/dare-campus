@@ -8,10 +8,9 @@ const Navbar = ({ hideGetDared = false }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const isActive = (path) => location.pathname === path;
-  
-  // Close mobile menu when route changes
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
@@ -30,7 +29,6 @@ const Navbar = ({ hideGetDared = false }) => {
             <Link to="/" className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
               Dare of the Day
             </Link>
-            {/* Mobile menu button */}
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="sm:hidden text-gray-300 hover:text-white focus:outline-none"
@@ -44,6 +42,7 @@ const Navbar = ({ hideGetDared = false }) => {
               </svg>
             </button>
           </div>
+
           {/* Desktop Navigation */}
           <div className="hidden sm:flex items-center space-x-2 sm:space-x-4">
             <Link 
@@ -62,6 +61,16 @@ const Navbar = ({ hideGetDared = false }) => {
                 } transition-colors duration-200 whitespace-nowrap`}
               >
                 Get Dared
+              </Link>
+            )}
+            {user && (
+              <Link
+                to="/leaderboard"
+                className={`px-2 sm:px-3 py-1 sm:py-2 rounded-md text-xs sm:text-sm font-medium ${
+                  isActive('/leaderboard') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800'
+                } transition-colors duration-200 whitespace-nowrap`}
+              >
+                Leaderboard
               </Link>
             )}
             {user ? (
@@ -104,13 +113,14 @@ const Navbar = ({ hideGetDared = false }) => {
               </div>
             )}
           </div>
-          
+
           {/* Mobile Navigation */}
-          <div className={`sm:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-14 left-0 w-full bg-gray-900/95 backdrop-blur-md`}>
+          <div className={`sm:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40 pt-14 overflow-y-auto`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link 
                 to="/" 
                 className={`block px-3 py-2 text-sm font-medium ${isActive('/') ? 'text-white' : 'text-gray-300 hover:bg-gray-800'}`}
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 Home
               </Link>
@@ -118,8 +128,18 @@ const Navbar = ({ hideGetDared = false }) => {
                 <Link 
                   to="/dare" 
                   className={`block px-3 py-2 text-sm font-medium ${isActive('/dare') ? 'text-white' : 'text-gray-300 hover:bg-gray-800'}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Get Dared
+                </Link>
+              )}
+              {user && (
+                <Link
+                  to="/leaderboard"
+                  className={`block px-3 py-2 text-sm font-medium ${isActive('/leaderboard') ? 'text-white' : 'text-gray-300 hover:bg-gray-800'}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Leaderboard
                 </Link>
               )}
               {user ? (
