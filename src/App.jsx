@@ -1,26 +1,25 @@
 // src/App.jsx
-import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Landing from './pages/landing';
+import Dare from './pages/dare';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Navbar from './components/navbar';
 
 function App() {
-  const [dare, setDare] = useState('');
-
-  useEffect(() => {
-    const fetchDare = async () => {
-      const querySnapshot = await getDocs(collection(db, 'dares'));
-      const dares = querySnapshot.docs.map(doc => doc.data());
-      const randomIndex = Math.floor(Math.random() * dares.length);
-      setDare(dares[randomIndex]?.text || "No dare found");
-    };
-    fetchDare();
-  }, []);
-
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <h1>Your Dare Today 💥</h1>
-      <p style={{ fontSize: '24px', fontWeight: 'bold' }}>{dare}</p>
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gray-900">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/dare" element={<Dare />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

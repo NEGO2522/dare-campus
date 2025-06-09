@@ -1,9 +1,21 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/navbar';
+import { useAuth } from '../context/AuthContext';
 
 function Landing() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleStartChallenge = (e) => {
+    e.preventDefault();
+    if (user) {
+      navigate('/dare');
+    } else {
+      navigate('/login', { state: { from: '/dare' } });
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <Navbar hideGetDared={true} />
@@ -31,14 +43,15 @@ function Landing() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Link to="/dare" className="inline-block w-full sm:w-auto">
-              <button className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full text-base sm:text-lg shadow-lg transform transition-all duration-200 flex items-center justify-center mx-auto">
-                <span>Start Your Challenge</span>
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </button>
-            </Link>
+            <button 
+              onClick={handleStartChallenge}
+              className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full text-base sm:text-lg shadow-lg transform transition-all duration-200 flex items-center justify-center mx-auto"
+            >
+              <span>Start Your Challenge</span>
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </button>
           </motion.div>
         </motion.div>
 
