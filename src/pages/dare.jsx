@@ -43,19 +43,18 @@ export default function Dare() {
 
   const handleNewDare = useCallback(() => {
     fetchDares();
-    
-    // Trigger confetti effect
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-  }, []);
+  }, [fetchDares]);
 
   const navigate = useNavigate();
 
   const handleSubmitDare = () => {
     if (dare) {
+      // Trigger confetti effect when submitting a dare
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
       navigate('/submit-dare', { state: { dare } });
     }
   };
@@ -169,7 +168,7 @@ export default function Dare() {
                           <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                           </svg>
-                          New Dare
+                          Change Dare
                         </>
                       )}
                     </motion.button>
