@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const Navbar = ({ hideGetDared = false }) => {
+const Navbar = ({ hideGetDared = false, onNextDare }) => {
   const { user, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,8 +21,39 @@ const Navbar = ({ hideGetDared = false }) => {
     navigate('/');
   };
 
+  // Close mobile menu when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileMenuOpen && !event.target.closest('.mobile-menu-container') && !event.target.closest('button[aria-label="Toggle menu"]')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    // Prevent scrolling when mobile menu is open
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <nav className="bg-gray-900/80 backdrop-blur-md shadow-xl fixed w-full z-10">
+    <nav className="bg-gray-900/80 backdrop-blur-md shadow-xl fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
           <div className="flex items-center justify-between w-full sm:w-auto">
@@ -31,7 +62,9 @@ const Navbar = ({ hideGetDared = false }) => {
             </Link>
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="sm:hidden text-gray-300 hover:text-white focus:outline-none"
+              className="sm:hidden text-gray-300 hover:text-white focus:outline-none p-2 -mr-2"
+              aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMobileMenuOpen ? (
@@ -115,8 +148,20 @@ const Navbar = ({ hideGetDared = false }) => {
           </div>
 
           {/* Mobile Navigation */}
-          <div className={`sm:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40 pt-14 overflow-y-auto`}>
-            <div className="px-2 pt-2 pb-3 space-y-1">
+          <div 
+            className={`sm:hidden fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40 pt-14 transition-all duration-300 ease-in-out transform ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+            style={{
+              height: 'calc(100vh - 3.5rem)',
+              top: '3.5rem',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              pointerEvents: isMobileMenuOpen ? 'auto' : 'none'
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-hidden={!isMobileMenuOpen}
+          >
+            <div className="px-4 py-2 space-y-1 mobile-menu-container">
               <Link 
                 to="/" 
                 className={`block px-3 py-2 text-sm font-medium ${isActive('/') ? 'text-white' : 'text-gray-300 hover:bg-gray-800'}`}
@@ -124,15 +169,24 @@ const Navbar = ({ hideGetDared = false }) => {
               >
                 Home
               </Link>
-              {!hideGetDared && (
-                <Link 
-                  to="/dare" 
-                  className={`block px-3 py-2 text-sm font-medium ${isActive('/dare') ? 'text-white' : 'text-gray-300 hover:bg-gray-800'}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Get Dared
-                </Link>
-              )}
+              <div className="flex items-center space-x-4">
+                {location.pathname === '/dare' && onNextDare && (
+                  <button
+                    onClick={onNextDare}
+                    className="px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium hover:from-green-600 hover:to-emerald-700 transition-colors"
+                  >
+                    Next Dare
+                  </button>
+                )}
+                {!hideGetDared && (
+                  <Link
+                    to="/dare"
+                    className="px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium hover:from-indigo-600 hover:to-purple-700 transition-colors"
+                  >
+                    Get Dared
+                  </Link>
+                )}
+              </div>
               {user && (
                 <Link
                   to="/leaderboard"
