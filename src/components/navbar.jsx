@@ -96,16 +96,6 @@ const Navbar = ({ hideGetDared = false, onNextDare }) => {
                 Get Dared
               </Link>
             )}
-            {user && (
-              <Link
-                to="/leaderboard"
-                className={`px-2 sm:px-3 py-1 sm:py-2 rounded-md text-xs sm:text-sm font-medium ${
-                  isActive('/leaderboard') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800'
-                } transition-colors duration-200 whitespace-nowrap`}
-              >
-                Leaderboard
-              </Link>
-            )}
             {user ? (
               <div className="relative ml-2">
                 <button
@@ -123,9 +113,17 @@ const Navbar = ({ hideGetDared = false, onNextDare }) => {
                         <p className="font-medium">{user.name || 'User'}</p>
                         <p className="text-xs text-gray-400 truncate">{user.email}</p>
                       </div>
+                      <Link
+                        to="/leaderboard"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                        role="menuitem"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        Leaderboard
+                      </Link>
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer"
                         role="menuitem"
                       >
                         Sign out

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db, auth } from '../firebaseConfig';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
@@ -14,19 +14,31 @@ export default function Dare() {
   const fetchDares = async () => {
     try {
       setIsLoading(true);
+      const user = auth.currentUser;
       const querySnapshot = await getDocs(collection(db, 'dares'));
-      const daresArray = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      
+      // Filter out the current user's dares
+      let daresArray = [];
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        // Only include dares that don't belong to the current user
+        if (!user || data.userId !== user.uid) {
+          daresArray.push({
+            id: doc.id,
+            ...data
+          });
+        }
+      });
 
       if (daresArray.length > 0) {
+        // Get a random dare from the filtered list
         const randomIndex = Math.floor(Math.random() * daresArray.length);
         setDare(daresArray[randomIndex]);
         setError(null);
       } else {
+        // If no dares are available (or only the user's dares exist)
         setDare(null);
-        setError('No dares found in the database');
+        setError('No new dares available. Check back later or create a new one!');
       }
     } catch (err) {
       console.error('Error fetching dares:', err);
@@ -187,7 +199,7 @@ export default function Dare() {
                       <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                       </svg>
-                      Submit Dare
+                      Prove Your Dare!
                     </motion.button>
                   </div>
                 </div>

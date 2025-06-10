@@ -3,6 +3,7 @@
 // Import the functions you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { 
   getAuth, 
   GoogleAuthProvider, 
@@ -29,6 +30,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services
 const db = getFirestore(app);
+const storage = getStorage(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
@@ -117,6 +119,7 @@ const onAuthStateChangedListener = (callback) => {
 export { 
   auth,
   db,
+  storage,
   signInWithGoogle, 
   signInWithEmail,
   signUpWithEmail,
