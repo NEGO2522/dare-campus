@@ -2,12 +2,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Landing from "./pages/landing";
-import Dare from "./pages/dare";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Leaderboard from "./pages/Leaderboard";
-import SubmitDare from "./pages/SubmitDare";
 import Navbar from "./components/navbar";
+import Feed from "./pages/Feed"; // 👈 NEW import
 
 const AppContent = () => {
   const location = useLocation();
@@ -30,11 +28,11 @@ const AppContent = () => {
       />}
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/dare" element={<Dare />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/submit-dare" element={<SubmitDare />} />
+
+        <Route path="/feed" element={<Feed />} />
+        
       </Routes>
     </div>
   );
