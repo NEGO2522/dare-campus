@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import Feed from "./pages/Feed";
 import Landing from "./pages/landing"; // 👈 Added back
 import Navbar from "./components/navbar";
+import Profile from "./pages/Profile";
 
 const AppContent = () => {
   const location = useLocation();
@@ -32,6 +33,7 @@ const AppContent = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/landing" element={<Landing />} /> {/* 👈 Landing route */}
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
   );

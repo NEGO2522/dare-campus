@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Image, Trash2, Home, Search, User } from "lucide-react";
+import { Image, Trash2, Home, Search, User, Plus } from "lucide-react";
 import Navbar from "../components/navbar";
+import { useNavigate } from "react-router-dom";
 
 export default function Feed() {
+  const navigate = useNavigate();
+
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -22,6 +25,7 @@ export default function Feed() {
   ]);
   const [newPost, setNewPost] = useState("");
   const [image, setImage] = useState(null);
+  const [showMobilePostInput, setShowMobilePostInput] = useState(false);
 
   const handlePost = () => {
     if (newPost.trim() === "" && !image) return;
@@ -35,6 +39,7 @@ export default function Feed() {
     setPosts([post, ...posts]);
     setNewPost("");
     setImage(null);
+    setShowMobilePostInput(false);
   };
 
   const handleDelete = (id) => {
@@ -57,8 +62,8 @@ export default function Feed() {
           Speak Your Mind 🧠
         </h1>
 
-        {/* Post Input Area */}
-        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+        {/* Post Input Area - Web Only */}
+        <div className="hidden md:block bg-gray-800 p-6 rounded-xl shadow-lg">
           <textarea
             className="w-full p-4 rounded-lg bg-gray-700 text-white focus:outline-none resize-none"
             rows="4"
@@ -115,25 +120,78 @@ export default function Feed() {
         </div>
       </div>
 
+      {/* Mobile Post Input Modal */}
+      {showMobilePostInput && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 backdrop-blur-sm bg-black/30 z-40 md:hidden"
+            onClick={() => setShowMobilePostInput(false)}
+          />
+
+          {/* Modal */}
+          <div className="fixed top-1/2 left-1/2 w-[90%] bg-gray-800 rounded-xl p-4 transform -translate-x-1/2 -translate-y-1/2 z-50 md:hidden shadow-2xl">
+            {/* Close */}
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => setShowMobilePostInput(false)}
+                className="text-gray-400 hover:text-red-400 text-xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            <textarea
+              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none resize-none"
+              rows="4"
+              placeholder="What's on your mind?"
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+            />
+            <div className="flex justify-between items-center mt-3">
+              <label className="cursor-pointer flex items-center gap-2 text-indigo-400 hover:text-indigo-300">
+                <Image className="w-5 h-5" />
+                <span className="text-sm">Add Photo</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+              <button
+                onClick={handlePost}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition duration-200"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around items-center px-4 py-3 md:hidden z-50 shadow-inner">
-        {/* Nav Item Template */}
+      <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex md:hidden z-50 shadow-inner">
         {[
-          { label: "Home", icon: <Home className="h-6 w-6 mb-1" /> },
-          { label: "Search", icon: <Search className="h-6 w-6 mb-1" /> },
+          {
+            label: "Home",
+            icon: <Home className="h-6 w-6" />,
+            onClick: () => navigate("/"),
+          },
+          {
+            label: "Search",
+            icon: <Search className="h-6 w-6" />,
+          },
           {
             label: "Create",
-            icon: <span className="text-3xl mb-1">+</span>,
-            onClick: () => {
-              document.querySelector("textarea")?.focus();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            },
+            icon: <Plus className="h-6 w-6" />,
+            onClick: () => setShowMobilePostInput(true),
           },
           {
             label: "Chat",
             icon: (
               <svg
-                className="h-6 w-6 mb-1"
+                className="h-6 w-6"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -147,19 +205,22 @@ export default function Feed() {
               </svg>
             ),
           },
-          { label: "Me", icon: <User className="h-6 w-6 mb-1" /> },
+          {
+            label: "Me",
+            icon: <User className="h-6 w-6" />,
+            onClick: () => navigate("/profile"),
+          },
         ].map(({ label, icon, onClick }) => (
           <button
             key={label}
             onClick={onClick}
-            className="flex flex-col items-center text-xs text-gray-300 hover:text-indigo-400 transition cursor-pointer"
+            className="flex-1 flex flex-col items-center justify-center py-2 text-xs text-gray-300 hover:text-indigo-400 transition"
           >
             {icon}
-            {label}
+            <span>{label}</span>
           </button>
         ))}
       </div>
     </div>
   );
 }
- 
